@@ -1,0 +1,7 @@
+{
+    "HostPath": "localhost",
+    "Username": "root",
+    "Password": "",
+    "Database": "goalbums",
+    "IsPrivate": false
+}

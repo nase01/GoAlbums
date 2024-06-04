@@ -1,0 +1,1 @@
+This repository contains a sample REST API built using Golang and the Gin framework. It demonstrates how to handle HTTP requests, middleware, routes, and route groups. The project is designed with a clean and scalable file and folder structure, making it easy to maintain and extend.
