@@ -2,8 +2,8 @@ This repository contains a sample REST API built using Golang and the Gin framew
 
 Run on Localhost
 
-1. git clone: [https://github.com/yourusername/sample-rest-api-golang-gin.gi](https://github.com/nase01/GoAlbums.git)t
-2. Edit db.json on /config (Th
+1. git clone: https://github.com/nase01/GoAlbums.git
+2. Edit db.json on /config
 3. go mod tidy
 4. go run main.go
 
