@@ -13,6 +13,6 @@ func SetupAlbumRoutes(router *gin.Engine) {
 		api.GET("/albums/:id", handlers.GetAlbumByID)
 		api.POST("/albums", handlers.CreateAlbum)
 		api.PUT("/albums/:id", handlers.UpdateAlbum)
-		api.DELETE("/albums/:id", handlers.DeleteAlbum)
+		api.DELETE("/albums", handlers.DeleteAlbums)
 	}
 }

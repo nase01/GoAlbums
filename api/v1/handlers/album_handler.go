@@ -6,6 +6,7 @@ import (
 	"GoAlbums/internal/service"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func GetAlbums(c *gin.Context) {
@@ -43,9 +44,36 @@ func CreateAlbum(c *gin.Context) {
 }
 
 func UpdateAlbum(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"status": "Not Implemented"})
+	id := c.Param("id")
+	var updatedAlbum service.Album
+	if err := c.BindJSON(&updatedAlbum); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	album, err := service.UpdateAlbum(id, updatedAlbum)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, album)
 }
 
-func DeleteAlbum(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"status": "Not Implemented"})
+func DeleteAlbums(c *gin.Context) {
+	var ids []string
+	if err := c.BindJSON(&ids); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	err := service.DeleteAlbums(ids)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Record(s) Not Found"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Album(s) deleted"})
 }
