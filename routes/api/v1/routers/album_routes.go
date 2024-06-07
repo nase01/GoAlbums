@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"GoAlbums/api/v1/handlers"
 	middleware "GoAlbums/internal"
+	"GoAlbums/routes/api/v1/handlers"
 
 	"github.com/gin-gonic/gin"
 )
