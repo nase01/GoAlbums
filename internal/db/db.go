@@ -3,9 +3,10 @@ package db
 import (
 	"log"
 
+	"GoAlbums/internal/models"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"GoAlbums/internal/models"
 )
 
 type DBLogger struct {
@@ -34,8 +35,7 @@ func ConnectDB(userName string, password string, unixPath string, database strin
 	DB.DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		log.Printf("Failed to connect database: %v", unixPath)
-		log.Printf("Failed to connect database: %v", err)
+		log.Fatalf("Failed to connect database at %v: %v", unixPath, err)
 		return false
 	} else {
 		log.Printf("Connected to database: %v", unixPath)
@@ -43,7 +43,9 @@ func ConnectDB(userName string, password string, unixPath string, database strin
 
 	log.Print("ORM Migrating DB Objects Begin")
 
-	DB.DB.AutoMigrate(&models.Album{})
+	if err := DB.DB.AutoMigrate(&models.Album{}); err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
+	}
 
 	log.Print("ORM Migrating DB Objects End")
 
