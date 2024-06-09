@@ -43,7 +43,7 @@ func ConnectDB(userName string, password string, unixPath string, database strin
 
 	log.Print("ORM Migrating DB Objects Begin")
 
-	if err := DB.DB.AutoMigrate(&models.Album{}); err != nil {
+	if err := DB.DB.AutoMigrate(&models.Album{}, &models.User{}); err != nil {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
 
