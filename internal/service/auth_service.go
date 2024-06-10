@@ -7,7 +7,7 @@ import (
 
 type User models.User
 
-func CreateUser(user User) (User, error) {
+func SignUp(user User) (User, error) {
 	result := db.DB.DB.Create(&user)
 	return user, result.Error
 }
