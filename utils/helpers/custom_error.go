@@ -22,21 +22,40 @@ func CustomError(err error) (ErrorResponse, int) {
 
 	log.Printf("err: ,%v", err.Error())
 
-	// DB custom error message
-	if strings.Contains(err.Error(), "1062") {
+	errorDetail := ErrorDetail{
+		Status: statusCode,
+		Detail: detail,
+	}
+
+	if strings.Contains(err.Error(), "cannot unmarshal") || strings.Contains(err.Error(), "invalid") || strings.Contains(err.Error(), "password") {
+		statusCode = http.StatusBadRequest
+		errorDetail = ErrorDetail{
+			Status: statusCode,
+			Detail: err.Error(),
+		}
+	} else if strings.Contains(err.Error(), "1062") {
 		statusCode = http.StatusConflict
-		detail = "Duplicate entry"
+		errorDetail = ErrorDetail{
+			Status: statusCode,
+			Detail: err.Error(),
+		}
 	} else if strings.Contains(err.Error(), "not found") {
 		statusCode = http.StatusNotFound
-		detail = "Record(s) not found"
+		errorDetail = ErrorDetail{
+			Status: statusCode,
+			Detail: err.Error(),
+		}
+	} else if strings.Contains(err.Error(), "unauthorized") {
+		statusCode = http.StatusUnauthorized
+		errorDetail = ErrorDetail{
+			Status: statusCode,
+			Detail: err.Error(),
+		}
 	}
 
 	errorResponse := ErrorResponse{
 		Errors: []ErrorDetail{
-			{
-				Status: statusCode,
-				Detail: detail,
-			},
+			errorDetail,
 		},
 	}
 

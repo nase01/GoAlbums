@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 
 	"GoAlbums/internal/dto"
@@ -16,33 +17,39 @@ func SignUp(c *gin.Context) {
 	var request dto.SignUpRequest
 
 	if err := c.BindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		errorResponse, statusCode := helpers.CustomError(err)
+		c.JSON(statusCode, errorResponse)
 		return
 	}
 
 	if !validator.ValidName(request.FullName) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid name format"})
+		errorResponse, statusCode := helpers.CustomError(errors.New("invalid name format"))
+		c.JSON(statusCode, errorResponse)
 		return
 	}
 
 	if !validator.ValidEmail(request.Email) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email format"})
+		errorResponse, statusCode := helpers.CustomError(errors.New("invalid email format"))
+		c.JSON(statusCode, errorResponse)
 		return
 	}
 
 	if !validator.PasswordMatched(request.Password, request.ConfirmPassword) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Passwords do not match"})
+		errorResponse, statusCode := helpers.CustomError(errors.New("password do not match"))
+		c.JSON(statusCode, errorResponse)
 		return
 	}
 
 	if !validator.StrongPassword(request.Password) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character"})
+		errorResponse, statusCode := helpers.CustomError(errors.New("password must be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character"))
+		c.JSON(statusCode, errorResponse)
 		return
 	}
 
 	hashedPassword, err := helpers.HashPassword(request.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		errorResponse, statusCode := helpers.CustomError(err)
+		c.JSON(statusCode, errorResponse)
 		return
 	}
 	request.Password = hashedPassword

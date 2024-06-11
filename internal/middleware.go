@@ -1,8 +1,9 @@
 package middleware
 
 import (
+	"GoAlbums/utils/helpers"
+	"errors"
 	"log"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +15,8 @@ func AuthRequired() gin.HandlerFunc {
 
 			//Need to have authorization token validation here
 
-			c.String(http.StatusUnauthorized, "Unauthorized Access")
+			errorResponse, statusCode := helpers.CustomError(errors.New("unauthorized access"))
+			c.JSON(statusCode, errorResponse)
 			c.Abort()
 			return
 		}

@@ -33,7 +33,8 @@ func GetAlbumByID(c *gin.Context) {
 func CreateAlbum(c *gin.Context) {
 	var newAlbum service.Album
 	if err := c.BindJSON(&newAlbum); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		errorResponse, statusCode := helpers.CustomError(err)
+		c.JSON(statusCode, errorResponse)
 		return
 	}
 
@@ -50,7 +51,8 @@ func UpdateAlbum(c *gin.Context) {
 	id := c.Param("id")
 	var updatedAlbum service.Album
 	if err := c.BindJSON(&updatedAlbum); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		errorResponse, statusCode := helpers.CustomError(err)
+		c.JSON(statusCode, errorResponse)
 		return
 	}
 
@@ -66,7 +68,8 @@ func UpdateAlbum(c *gin.Context) {
 func DeleteAlbums(c *gin.Context) {
 	var ids []string
 	if err := c.BindJSON(&ids); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		errorResponse, statusCode := helpers.CustomError(err)
+		c.JSON(statusCode, errorResponse)
 		return
 	}
 
