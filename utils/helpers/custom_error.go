@@ -27,29 +27,33 @@ func CustomError(err error) (ErrorResponse, int) {
 		Detail: detail,
 	}
 
-	if strings.Contains(err.Error(), "cannot unmarshal") || strings.Contains(err.Error(), "invalid") || strings.Contains(err.Error(), "password") {
+	if strings.Contains(err.Error(), "unmarshal") ||
+		strings.Contains(err.Error(), "invalid") ||
+		strings.Contains(err.Error(), "password") ||
+		strings.Contains(err.Error(), "empty") {
+
 		statusCode = http.StatusBadRequest
 		errorDetail = ErrorDetail{
 			Status: statusCode,
-			Detail: err.Error(),
+			Detail: CFirst(err.Error()),
 		}
 	} else if strings.Contains(err.Error(), "1062") {
-		statusCode = http.StatusConflict
+		statusCode = http.StatusConflict //DB Error Duplicate Entry
 		errorDetail = ErrorDetail{
 			Status: statusCode,
-			Detail: err.Error(),
+			Detail: CFirst(err.Error()),
 		}
 	} else if strings.Contains(err.Error(), "not found") {
 		statusCode = http.StatusNotFound
 		errorDetail = ErrorDetail{
 			Status: statusCode,
-			Detail: err.Error(),
+			Detail: CFirst(err.Error()),
 		}
 	} else if strings.Contains(err.Error(), "unauthorized") {
 		statusCode = http.StatusUnauthorized
 		errorDetail = ErrorDetail{
 			Status: statusCode,
-			Detail: err.Error(),
+			Detail: CFirst(err.Error()),
 		}
 	}
 

@@ -5,6 +5,7 @@ import (
 
 	"GoAlbums/internal/service"
 	"GoAlbums/utils/helpers"
+	form "GoAlbums/utils/validator/forms"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,6 +39,12 @@ func CreateAlbum(c *gin.Context) {
 		return
 	}
 
+	if err := form.ValidateAlbum(newAlbum); err != nil {
+		errorResponse, statusCode := helpers.CustomError(err)
+		c.JSON(statusCode, errorResponse)
+		return
+	}
+
 	album, err := service.CreateAlbum(newAlbum)
 	if err != nil {
 		errorResponse, statusCode := helpers.CustomError(err)
@@ -51,6 +58,12 @@ func UpdateAlbum(c *gin.Context) {
 	id := c.Param("id")
 	var updatedAlbum service.Album
 	if err := c.BindJSON(&updatedAlbum); err != nil {
+		errorResponse, statusCode := helpers.CustomError(err)
+		c.JSON(statusCode, errorResponse)
+		return
+	}
+
+	if err := form.ValidateAlbum(updatedAlbum); err != nil {
 		errorResponse, statusCode := helpers.CustomError(err)
 		c.JSON(statusCode, errorResponse)
 		return
