@@ -1,20 +1,36 @@
 package middleware
 
 import (
+	"GoAlbums/routes/api/v1/handlers"
 	"GoAlbums/utils/helpers"
 	"errors"
 	"log"
+	"strings"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
+var jwtKey = []byte("MySecret123")
+
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.GetHeader("Authorization")
-		if token == "" {
+		tokenString := c.GetHeader("Authorization")
 
-			//Need to have authorization token validation here
+		if tokenString == "" {
+			errorResponse, statusCode := helpers.CustomError(errors.New("unauthorized access"))
+			c.JSON(statusCode, errorResponse)
+			c.Abort()
+			return
+		}
 
+		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+		claims := &handlers.Claims{}
+		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+			return jwtKey, nil
+		})
+
+		if err != nil || !token.Valid {
 			errorResponse, statusCode := helpers.CustomError(errors.New("unauthorized access"))
 			c.JSON(statusCode, errorResponse)
 			c.Abort()
@@ -23,9 +39,8 @@ func AuthRequired() gin.HandlerFunc {
 
 		log.Printf("Middleware Checkpoint")
 
-		// Add some rediirection logic here
-		// c.Redirect(http.StatusFound, "/dashboard")
-
+		c.Set("userID", claims.ID)
+		c.Set("userEmail", claims.Email)
 		c.Next()
 	}
 }
