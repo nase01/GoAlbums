@@ -32,7 +32,7 @@ func SignIn(c *gin.Context) {
 		return
 	}
 
-	user, err := models.FindUserByEmail(db.DB.DB, request.Email)
+	user, err := service.FindUserByEmail(db.DB.DB, request.Email)
 	if err != nil {
 		errorResponse, statusCode := helpers.CustomError(err)
 		c.JSON(statusCode, errorResponse)
