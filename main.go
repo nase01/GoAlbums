@@ -10,8 +10,9 @@ import (
 )
 
 func main() {
-	// Load database credentials
-	config.LoadCreds()
+
+	// Load Configs
+	config.InitializeConfig()
 
 	// Connect to the database
 	if config.UseDB {

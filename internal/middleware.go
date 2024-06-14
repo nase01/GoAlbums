@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"GoAlbums/config"
 	"GoAlbums/routes/api/v1/handlers"
 	"GoAlbums/utils/helpers"
 	"errors"
@@ -11,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var jwtKey = []byte("MySecret123")
+var jwtKey = config.GetJWTKey()
 
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {

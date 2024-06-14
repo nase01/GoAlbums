@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"GoAlbums/config"
 	"GoAlbums/internal/db"
 	"GoAlbums/internal/dto"
 	"GoAlbums/internal/models"
@@ -16,7 +17,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var jwtKey = []byte("MySecret123")
+var jwtKey = config.GetJWTKey()
 
 type Claims struct {
 	ID    string `json:"id"`
