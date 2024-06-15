@@ -13,8 +13,8 @@ import (
 	"GoAlbums/utils/helpers"
 	form "GoAlbums/utils/validator/forms"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var jwtKey = config.GetJWTKey()
@@ -22,7 +22,7 @@ var jwtKey = config.GetJWTKey()
 type Claims struct {
 	ID    string `json:"id"`
 	Email string `json:"email"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func SignIn(c *gin.Context) {
@@ -50,8 +50,8 @@ func SignIn(c *gin.Context) {
 	claims := &Claims{
 		ID:    user.Id,
 		Email: user.Email,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
 	}
 

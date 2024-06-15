@@ -8,8 +8,8 @@ import (
 	"log"
 	"strings"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var jwtKey = config.GetJWTKey()
