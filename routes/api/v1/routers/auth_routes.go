@@ -9,7 +9,7 @@ import (
 func SetupAuthRoutes(router *gin.Engine) {
 	api := router.Group("/api/v1")
 	{
-		api.POST("/signin", handlers.SignIn)
-		api.POST("/signup", handlers.SignUp)
+		api.POST("/auth/signin", handlers.SignIn)
+		api.POST("/auth/signup", handlers.SignUp)
 	}
 }
