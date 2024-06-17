@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"time"
 
@@ -23,6 +24,7 @@ type Claims struct {
 	ID    string `json:"id"`
 	Email string `json:"email"`
 	jwt.RegisteredClaims
+	IP string `json:"ip"`
 }
 
 func SignIn(c *gin.Context) {
@@ -40,6 +42,9 @@ func SignIn(c *gin.Context) {
 		return
 	}
 
+	log.Printf("Role: %v", string(user.Role))
+	log.Printf("IP: %v", helpers.GetUserIP(c.Request))
+
 	if !helpers.CheckPasswordHash(request.Password, user.Password) {
 		errorResponse, statusCode := helpers.CustomError(errors.New("invalid password"))
 		c.JSON(statusCode, errorResponse)
@@ -50,6 +55,7 @@ func SignIn(c *gin.Context) {
 	claims := &Claims{
 		ID:    user.Id,
 		Email: user.Email,
+		IP:    helpers.GetUserIP(c.Request),
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
