@@ -21,6 +21,17 @@ func FindUserByEmail(db *gorm.DB, email string) (*User, error) {
 	return &user, nil
 }
 
+func FindUserByID(db *gorm.DB, id string) (*User, error) {
+	var user User
+	if err := db.Where("id = ?", id).First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("user not found")
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
 func SignUp(user User) (User, error) {
 	result := db.DB.DB.Create(&user)
 	return user, result.Error

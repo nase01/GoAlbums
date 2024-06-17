@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"GoAlbums/config"
@@ -119,4 +122,25 @@ func SignUp(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, user)
+}
+
+func GetCurrentUser(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+	tokenString := strings.Split(authHeader, " ")[1]
+
+	parts := strings.Split(tokenString, ".")
+	payload, _ := base64.RawStdEncoding.DecodeString(parts[1])
+
+	claims := &Claims{}
+	json.Unmarshal(payload, claims)
+
+	userID := claims.ID
+
+	user, err := service.FindUserByID(db.DB.DB, userID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }
