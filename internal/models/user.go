@@ -14,10 +14,11 @@ const (
 
 type User struct {
 	CtmBasemModel
-	Email    string `json:"email" gorm:"column:email;unique;index"`
-	Password string `json:"-" gorm:"column:password;varchar(255);"` // Exclude Password from JSON Output
-	FullName string `json:"fullname" gorm:"column:fullname;not null;varchar(255);"`
-	Role     Role   `json:"role" gorm:"column:role;type:enum('user', 'admin', 'super');default:'user'"`
+	Email       string `json:"email" gorm:"column:email;unique;index"`
+	Password    string `json:"-" gorm:"column:password;varchar(255);"` // Exclude Password from JSON Output
+	FullName    string `json:"fullname" gorm:"column:fullname;not null;varchar(255);"`
+	Role        Role   `json:"role" gorm:"column:role;type:enum('user', 'admin', 'super');default:'user'"`
+	IPWhiteList string `json:"ip" gorm:"column:ip;"`
 }
 
 func (user *User) BeforeCreate(tx *gorm.DB) (err error) {
