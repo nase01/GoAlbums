@@ -133,7 +133,7 @@ func GetCurrentUser(c *gin.Context) {
 
 	user, err := service.FindUserByID(db.DB.DB, userID.(string))
 	if err != nil {
-		errorResponse, statusCode := helpers.CustomError(errors.New("user not found"))
+		errorResponse, statusCode := helpers.CustomError(err)
 		c.JSON(statusCode, errorResponse)
 		return
 	}
