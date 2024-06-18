@@ -1,12 +1,9 @@
 package handlers
 
 import (
-	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 
 	"GoAlbums/config"
@@ -24,8 +21,9 @@ import (
 var jwtKey = config.GetJWTKey()
 
 type Claims struct {
-	ID    string `json:"id"`
-	Email string `json:"email"`
+	ID    string      `json:"id"`
+	Email string      `json:"email"`
+	Role  models.Role `json:"role"`
 	jwt.RegisteredClaims
 	IP string `json:"ip"`
 }
@@ -58,6 +56,7 @@ func SignIn(c *gin.Context) {
 	claims := &Claims{
 		ID:    user.Id,
 		Email: user.Email,
+		Role:  user.Role,
 		IP:    helpers.GetUserIP(c.Request),
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
@@ -125,20 +124,17 @@ func SignUp(c *gin.Context) {
 }
 
 func GetCurrentUser(c *gin.Context) {
-	authHeader := c.GetHeader("Authorization")
-	tokenString := strings.Split(authHeader, " ")[1]
+	userID, exists := c.Get("userID")
+	if !exists {
+		errorResponse, statusCode := helpers.CustomError(errors.New("userID not found"))
+		c.JSON(statusCode, errorResponse)
+		return
+	}
 
-	parts := strings.Split(tokenString, ".")
-	payload, _ := base64.RawStdEncoding.DecodeString(parts[1])
-
-	claims := &Claims{}
-	json.Unmarshal(payload, claims)
-
-	userID := claims.ID
-
-	user, err := service.FindUserByID(db.DB.DB, userID)
+	user, err := service.FindUserByID(db.DB.DB, userID.(string))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		errorResponse, statusCode := helpers.CustomError(errors.New("user not found"))
+		c.JSON(statusCode, errorResponse)
 		return
 	}
 
