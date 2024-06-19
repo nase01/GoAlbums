@@ -55,6 +55,12 @@ func CustomError(err error) (ErrorResponse, int) {
 			Status: statusCode,
 			Detail: CFirst(err.Error()),
 		}
+	} else if strings.Contains(err.Error(), "forbidden") {
+		statusCode = http.StatusForbidden
+		errorDetail = ErrorDetail{
+			Status: statusCode,
+			Detail: CFirst(err.Error()),
+		}
 	}
 
 	errorResponse := ErrorResponse{

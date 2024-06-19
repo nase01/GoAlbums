@@ -12,8 +12,8 @@ func SetupAlbumRoutes(router *gin.Engine) {
 	{
 		api.GET("/albums", handlers.GetAlbums)
 		api.GET("/albums/:id", handlers.GetAlbumByID)
-		api.POST("/albums", handlers.CreateAlbum)
-		api.PUT("/albums/:id", handlers.UpdateAlbum)
-		api.DELETE("/albums", handlers.DeleteAlbums)
+		api.POST("/albums", middleware.RoleRequired("super"), handlers.CreateAlbum)
+		api.PUT("/albums/:id", middleware.RoleRequired("super"), handlers.UpdateAlbum)
+		api.DELETE("/albums", middleware.RoleRequired("super"), handlers.DeleteAlbums)
 	}
 }

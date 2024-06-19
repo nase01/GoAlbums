@@ -42,7 +42,32 @@ func AuthRequired() gin.HandlerFunc {
 
 		c.Set("userID", claims.ID)
 		c.Set("userEmail", claims.Email)
-		c.Set("userRole", claims.Role)
+		c.Set("userRole", string(claims.Role))
+		c.Next()
+	}
+}
+
+func RoleRequired(requiredRole string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userRole, exists := c.Get("userRole")
+
+		if !exists {
+			errorResponse, statusCode := helpers.CustomError(errors.New("unauthorized access"))
+			c.JSON(statusCode, errorResponse)
+			c.Abort()
+			return
+		}
+
+		log.Printf("User Role: %v", userRole)
+		log.Printf("Required Role: %v", requiredRole)
+
+		if userRole != requiredRole {
+			errorResponse, statusCode := helpers.CustomError(errors.New("forbidden access"))
+			c.JSON(statusCode, errorResponse)
+			c.Abort()
+			return
+		}
+
 		c.Next()
 	}
 }
