@@ -26,6 +26,7 @@ func main() {
 	// Setup routes
 	routesAPI.SetupAlbumRoutes(router)
 	routesAPI.SetupAuthRoutes(router)
+	routesAPI.SetupAccountRoutes(router)
 	routesPublic.SetupPublicRoutes(router)
 	// You can add more route setups here for other resources
 
