@@ -10,6 +10,6 @@ import (
 func SetupUserLogsRoutes(router *gin.Engine) {
 	api := router.Group("/api/v1", middleware.AuthRequired())
 	{
-		api.GET("/user/logs", middleware.RoleRequired("super"), handlers.GetAlbums)
+		api.GET("/user/logs", middleware.RoleRequired("super"), handlers.GetUserLogs)
 	}
 }
