@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -81,6 +82,16 @@ func SignIn(c *gin.Context) {
 			},
 		},
 	}
+
+	userLogs := service.UserLogs{
+		UserId:   user.Id,
+		Activity: fmt.Sprintf("Logged-in -> %s", user.Email),
+	}
+
+	if _, err := service.CreateUserLogs(userLogs); err != nil {
+		log.Printf("Failed to log user activity: %v", err)
+	}
+
 	c.JSON(http.StatusOK, response)
 }
 
