@@ -3,8 +3,8 @@ package main
 import (
 	"GoAlbums/config"
 	"GoAlbums/internal/db"
-	routesAPI "GoAlbums/routes/api/v1/routers"
-	routesPublic "GoAlbums/routes/public"
+	apiRoutes "GoAlbums/routes/api/v1/routers"
+	webRoutes "GoAlbums/routes/web"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,11 +24,11 @@ func main() {
 	router := gin.Default()
 
 	// Setup routes
-	routesAPI.SetupAlbumRoutes(router)
-	routesAPI.SetupAuthRoutes(router)
-	routesAPI.SetupAccountRoutes(router)
-	routesAPI.SetupUserLogsRoutes(router)
-	routesPublic.SetupPublicRoutes(router)
+	apiRoutes.SetupAlbumRoutes(router)
+	apiRoutes.SetupAuthRoutes(router)
+	apiRoutes.SetupAccountRoutes(router)
+	apiRoutes.SetupUserLogsRoutes(router)
+	webRoutes.SetupPublicRoutes(router)
 	// You can add more route setups here for other resources
 
 	// Start the server
