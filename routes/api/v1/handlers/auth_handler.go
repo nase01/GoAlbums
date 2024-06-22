@@ -131,6 +131,15 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
+	userLogs := service.UserLogs{
+		UserId:   user.Id,
+		Activity: fmt.Sprintf("Newly Registered -> %s", user.Email),
+	}
+
+	if _, err := service.CreateUserLogs(userLogs); err != nil {
+		log.Printf("Failed to log user activity: %v", err)
+	}
+
 	c.JSON(http.StatusCreated, user)
 }
 
