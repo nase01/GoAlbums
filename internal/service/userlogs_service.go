@@ -7,10 +7,12 @@ import (
 
 type UserLogs models.UserLogs
 
-func GetUserLogs() ([]UserLogs, error) {
+func GetUserLogs(currentPage, perPage int) ([]UserLogs, error) {
 	var userLogs []UserLogs
 
-	result := db.DB.DB.Find(&userLogs)
+	offset := (currentPage - 1) * perPage
+
+	result := db.DB.DB.Limit(perPage).Offset(offset).Find(&userLogs)
 	return userLogs, result.Error
 }
 

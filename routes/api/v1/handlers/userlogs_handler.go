@@ -10,11 +10,14 @@ import (
 )
 
 func GetUserLogs(c *gin.Context) {
-	albums, err := service.GetUserLogs()
+
+	pagination := helpers.GetPaginationParams(c)
+
+	userLogs, err := service.GetUserLogs(pagination.CurrentPage, pagination.PerPage)
 	if err != nil {
 		errorResponse, statusCode := helpers.CustomError(err)
 		c.JSON(statusCode, errorResponse)
 		return
 	}
-	c.JSON(http.StatusOK, albums)
+	c.JSON(http.StatusOK, userLogs)
 }
