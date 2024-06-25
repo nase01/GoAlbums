@@ -14,7 +14,10 @@ import (
 )
 
 func GetAlbums(c *gin.Context) {
-	albums, err := service.GetAlbums()
+
+	pagination := helpers.GetPaginationParams(c)
+
+	albums, err := service.GetAlbums(pagination.CurrentPage, pagination.PerPage)
 	if err != nil {
 		errorResponse, statusCode := helpers.CustomError(err)
 		c.JSON(statusCode, errorResponse)

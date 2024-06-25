@@ -9,10 +9,12 @@ import (
 
 type Album models.Album
 
-func GetAlbums() ([]Album, error) {
+func GetAlbums(currentPage, perPage int) ([]Album, error) {
 	var albums []Album
 
-	result := db.DB.DB.Find(&albums)
+	offset := (currentPage - 1) * perPage
+
+	result := db.DB.DB.Limit(perPage).Offset(offset).Find(&albums)
 	return albums, result.Error
 }
 
