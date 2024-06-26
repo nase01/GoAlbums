@@ -9,7 +9,7 @@ import (
 
 type Album models.Album
 
-func GetAlbums(currentPage, perPage int, sort string) ([]Album, error) {
+func GetAlbums(currentPage, perPage int, sort, from, to string) ([]Album, error) {
 	var albums []Album
 
 	offset := (currentPage - 1) * perPage
@@ -17,7 +17,9 @@ func GetAlbums(currentPage, perPage int, sort string) ([]Album, error) {
 		sort = "desc"
 	}
 
-	result := db.DB.DB.Order("created_at " + sort).Limit(perPage).Offset(offset).Find(&albums)
+	result := db.DB.DB.
+		Where("created_at BETWEEN ? AND ?", from, to).
+		Order("created_at " + sort).Limit(perPage).Offset(offset).Find(&albums)
 	return albums, result.Error
 }
 

@@ -7,7 +7,7 @@ import (
 
 type UserLogs models.UserLogs
 
-func GetUserLogs(currentPage, perPage int, sort string) ([]UserLogs, error) {
+func GetUserLogs(currentPage, perPage int, sort, from, to string) ([]UserLogs, error) {
 	var userLogs []UserLogs
 
 	offset := (currentPage - 1) * perPage
@@ -15,7 +15,9 @@ func GetUserLogs(currentPage, perPage int, sort string) ([]UserLogs, error) {
 		sort = "desc"
 	}
 
-	result := db.DB.DB.Order("created_at " + sort).Limit(perPage).Offset(offset).Find(&userLogs)
+	result := db.DB.DB.
+		Where("created_at BETWEEN ? AND ?", from, to).
+		Order("created_at " + sort).Limit(perPage).Offset(offset).Find(&userLogs)
 	return userLogs, result.Error
 }
 
