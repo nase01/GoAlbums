@@ -7,12 +7,15 @@ import (
 
 type UserLogs models.UserLogs
 
-func GetUserLogs(currentPage, perPage int) ([]UserLogs, error) {
+func GetUserLogs(currentPage, perPage int, sort string) ([]UserLogs, error) {
 	var userLogs []UserLogs
 
 	offset := (currentPage - 1) * perPage
+	if sort != "asc" && sort != "desc" {
+		sort = "desc"
+	}
 
-	result := db.DB.DB.Limit(perPage).Offset(offset).Find(&userLogs)
+	result := db.DB.DB.Order("created_at " + sort).Limit(perPage).Offset(offset).Find(&userLogs)
 	return userLogs, result.Error
 }
 

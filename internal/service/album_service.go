@@ -9,12 +9,15 @@ import (
 
 type Album models.Album
 
-func GetAlbums(currentPage, perPage int) ([]Album, error) {
+func GetAlbums(currentPage, perPage int, sort string) ([]Album, error) {
 	var albums []Album
 
 	offset := (currentPage - 1) * perPage
+	if sort != "asc" && sort != "desc" {
+		sort = "desc"
+	}
 
-	result := db.DB.DB.Limit(perPage).Offset(offset).Find(&albums)
+	result := db.DB.DB.Order("created_at " + sort).Limit(perPage).Offset(offset).Find(&albums)
 	return albums, result.Error
 }
 
