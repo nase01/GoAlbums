@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"log"
 	"net/http"
 
 	"GoAlbums/internal/service"
@@ -26,7 +25,7 @@ func UpdateAccount(c *gin.Context) {
 		c.JSON(statusCode, errorResponse)
 		return
 	}
-	log.Printf("Fullname: %v", updatedAccount.FullName)
+
 	if !validator.ValidName(updatedAccount.FullName) {
 		errorResponse, statusCode := helpers.CustomError(errors.New("invalid name format"))
 		c.JSON(statusCode, errorResponse)
