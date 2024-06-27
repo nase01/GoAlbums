@@ -3,23 +3,31 @@ package service
 import (
 	"GoAlbums/internal/db"
 	"GoAlbums/internal/models"
+	"GoAlbums/utils/helpers"
 
 	"gorm.io/gorm"
 )
 
 type Album models.Album
 
-func GetAlbums(currentPage, perPage int, sort, from, to string) ([]Album, error) {
+func GetAlbums(filters helpers.QueryFilters) ([]Album, error) {
 	var albums []Album
+	var result *gorm.DB
 
-	offset := (currentPage - 1) * perPage
-	if sort != "asc" && sort != "desc" {
-		sort = "desc"
+	offset := (filters.Pagination.CurrentPage - 1) * filters.Pagination.PerPage
+	if filters.Sort != "asc" && filters.Sort != "desc" {
+		filters.Sort = "desc"
 	}
 
-	result := db.DB.DB.
-		Where("created_at BETWEEN ? AND ?", from, to).
-		Order("created_at " + sort).Limit(perPage).Offset(offset).Find(&albums)
+	query := db.DB.DB.
+		Where("created_at BETWEEN ? AND ?", filters.From, filters.To).
+		Order("created_at " + filters.Sort).Limit(filters.Pagination.PerPage).Offset(offset)
+
+	if filters.Search != "" {
+		query = query.Where("title LIKE ? OR artist LIKE ?", "%"+filters.Search+"%", "%"+filters.Search+"%")
+	}
+
+	result = query.Find(&albums)
 	return albums, result.Error
 }
 

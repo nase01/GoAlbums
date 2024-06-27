@@ -3,21 +3,27 @@ package service
 import (
 	"GoAlbums/internal/db"
 	"GoAlbums/internal/models"
+	"GoAlbums/utils/helpers"
+
+	"gorm.io/gorm"
 )
 
 type UserLogs models.UserLogs
 
-func GetUserLogs(currentPage, perPage int, sort, from, to string) ([]UserLogs, error) {
+func GetUserLogs(filters helpers.QueryFilters) ([]UserLogs, error) {
 	var userLogs []UserLogs
+	var result *gorm.DB
 
-	offset := (currentPage - 1) * perPage
-	if sort != "asc" && sort != "desc" {
-		sort = "desc"
+	offset := (filters.Pagination.CurrentPage - 1) * filters.Pagination.PerPage
+	if filters.Sort != "asc" && filters.Sort != "desc" {
+		filters.Sort = "desc"
 	}
 
-	result := db.DB.DB.
-		Where("created_at BETWEEN ? AND ?", from, to).
-		Order("created_at " + sort).Limit(perPage).Offset(offset).Find(&userLogs)
+	query := db.DB.DB.
+		Where("created_at BETWEEN ? AND ?", filters.From, filters.To).
+		Order("created_at " + filters.Sort).Limit(filters.Pagination.PerPage).Offset(offset)
+
+	result = query.Find(&userLogs)
 	return userLogs, result.Error
 }
 
